@@ -1,1 +1,40 @@
+{% extends "base.html" %}
+{% block title %}Add Funds · Cash Flow Future AI{% endblock %}
+{% block content %}
+<div style="margin-bottom:20px;">
+    <a href="{{ url_for('wallet') }}" style="color:var(--text-muted); font-size:13px;">← Back to wallet</a>
+</div>
 
+<div class="card" style="max-width:560px;">
+    <h1 style="font-size:22px; font-weight:700; margin-bottom:6px;">Add Simulated Funds</h1>
+    <p style="color:var(--text-secondary); font-size:14px; margin-bottom:20px;">Submit a simulated deposit request for admin review.</p>
+
+    <div class="disclaimer" style="margin-bottom:20px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        <span><strong>Demonstration environment.</strong> No real mobile-money payment is processed. Deposits are simulated and require admin approval.</span>
+    </div>
+
+    <form method="POST">
+        <div class="form-group">
+            <label class="form-label">Payment Method</label>
+            <select name="method" class="form-select" required>
+                <option value="">Select method</option>
+                {% for m in methods %}
+                <option value="{{ m.id }}">{{ m.name }} — simulated</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Amount (UGX)</label>
+            <input type="number" name="amount" class="form-input" required min="5000" max="5000000" placeholder="e.g. 50000">
+            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Min {{ format_ugx(5000) }} · Max {{ format_ugx(5000000) }}</div>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Simulated Transaction Reference</label>
+            <input type="text" name="reference_id" class="form-input" required placeholder="e.g. MP2X9K4L3M">
+            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Enter any reference for this simulation.</div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Submit Deposit Request</button>
+    </form>
+</div>
+{% endblock %}
