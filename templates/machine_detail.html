@@ -1,1 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ machine.name }} · Cash Flow Future AI{% endblock %}
+{% block content %}
+<div style="margin-bottom:20px;">
+    <a href="{{ url_for('machines') }}" style="color:var(--text-muted); font-size:13px;">← Back to catalogue</a>
+</div>
 
+<div class="grid-2">
+    <div class="card">
+        <div class="machine-tier">{{ machine.tier }}</div>
+        <h1 style="font-size:26px; font-weight:700; margin:8px 0 14px;">{{ machine.name }}</h1>
+        <p style="color:var(--text-secondary); margin-bottom:20px;">{{ machine.description }}</p>
+        <div class="machine-stats">
+            <div>
+                <div class="machine-stat-label">Entry Price</div>
+                <div class="machine-stat-value">{{ format_ugx(machine.price) }}</div>
+            </div>
+            <div>
+                <div class="machine-stat-label">Simulation Target</div>
+                <div class="machine-stat-value">{{ format_ugx(machine.simulation_target) }}</div>
+            </div>
+            <div>
+                <div class="machine-stat-label">Duration</div>
+                <div class="machine-stat-value">{{ machine.duration_days }} days</div>
+            </div>
+            <div>
+                <div class="machine-stat-label">Your Balance</div>
+                <div class="machine-stat-value">{{ format_ugx(user.wallet.balance) }}</div>
+            </div>
+        </div>
+
+        <div class="disclaimer" style="margin:16px 0;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            <span>Simulation values only. No guaranteed returns.</span>
+        </div>
+
+        {% if owned %}
+            <div class="badge badge-success" style="margin-bottom:12px;">✓ You own this machine</div>
+            <div style="margin-top:14px;">
+                <div style="font-size:12px; color:var(--text-muted); margin-bottom:6px;">Progress</div>
+                <div class="progress">
+                    <div class="progress-bar" style="width:{{ owned.progress_percent }}%;" data-target="{{ owned.progress_percent }}%;"></div>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size:12px; color:var(--text-secondary); margin-top:8px;">
+                    <span>Current: {{ format_ugx(owned.current_simulated_value) }}</span>
+                    <span>{{ '%.1f' % owned.progress_percent }}%</span>
+                </div>
+            </div>
+        {% else %}
+            <form method="POST" action="{{ url_for('buy_machine', machine_id=machine.id) }}">
+                <button type="submit" class="btn btn-primary btn-block btn-lg" {% if user.wallet.balance < machine.price %}disabled style="opacity:.5; cursor:not-allowed;"{% endif %}>
+                    {% if user.wallet.balance < machine.price %}
+                        Insufficient Balance
+                    {% else %}
+                        Acquire for {{ format_ugx(machine.price) }}
+                    {% endif %}
+                </button>
+            </form>
+        {% endif %}
+    </div>
+
+    <div class="card">
+        <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">What's included</h2>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:12px;">
+            <li style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="color:var(--success);">✓</span>
+                <div>
+                    <div style="font-weight:500;">Simulated performance tracking</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Monitor progress across the full duration.</div>
+                </div>
+            </li>
+            <li style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="color:var(--success);">✓</span>
+                <div>
+                    <div style="font-weight:500;">Transparent ledger entries</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Every action is recorded immutably.</div>
+                </div>
+            </li>
+            <li style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="color:var(--success);">✓</span>
+                <div>
+                    <div style="font-weight:500;">Raffle entry bonus</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Earn simulated raffle entries on purchase.</div>
+                </div>
+            </li>
+            <li style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="color:var(--success);">✓</span>
+                <div>
+                    <div style="font-weight:500;">Mobile-first dashboard</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Track from any device, anywhere.</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
