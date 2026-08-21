@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% block title %}Dashboard · Cash Flow Future AI{% endblock %}
+{% block content %}
+<div class="topbar">
+    <div>
+        <h1>Welcome back, {{ current_user.full_name.split()[0] }}</h1>
+        <p style="color:var(--text-secondary); font-size:13px; margin-top:4px;">Here's your simulated portfolio overview.</p>
+    </div>
+    <div class="user-chip">
+        <div class="avatar">{{ current_user.full_name[0] }}</div>
+        <div style="font-size:13px; font-weight:500;">{{ current_user.full_name }}</div>
+    </div>
+</div>
+
+<!-- Balance cards -->
+<div class="grid-4">
+    <div class="card balance-card">
+        <div class="card-title">Available Balance</div>
+        <div class="card-value">{{ format_ugx(user.wallet.balance) }}</div>
+        <div class="card-sub">Ready to deploy</div>
+    </div>
+    <div class="card balance-card accent-purple">
+        <div class="card-title">Investment Balance</div>
+        <div class="card-value">{{ format_ugx(user.wallet.investment_balance) }}</div>
+        <div class="card-sub">In simulated machines</div>
+    </div>
+    <div class="card balance-card accent-green">
+        <div class="card-title">Rewards</div>
+        <div class="card-value">{{ format_ugx(user.wallet.bonus_balance) }}</div>
+        <div class="card-sub">Promotional simulation</div>
+    </div>
+    <div class="card balance-card accent-gold">
+        <div class="card-title">Total Portfolio</div>
+        <div class="card-value">{{ format_ugx(user.total_portfolio_value) }}</div>
+        <div class="card-sub">Combined simulated value</div>
+    </div>
+</div>
+
+<!-- Quick actions -->
+<div class="quick-actions">
+    <a href="{{ url_for('deposit') }}" class="quick-action">
+        <div class="qa-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+        </div>
+        <div class="qa-label">Add Funds</div>
+    </a>
+    <a href="{{ url_for('withdraw') }}" class="quick-action">
+        <div class="qa-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 7l-10 10M8 7h9v9"/></svg>
+        </div>
+        <div class="qa-label">Withdraw</div>
+    </a>
+    <a href="{{ url_for('machines') }}" class="quick-action">
+        <div class="qa-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10"/></svg>
+        </div>
+        <div class="qa-label">Buy Machine</div>
+    </a>
+    <a href="{{ url_for('referrals') }}" class="quick-action">
+        <div class="qa-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+        </div>
+        <div class="qa-label">Invite Friends</div>
+    </a>
+    <a href="{{ url_for('raffle') }}" class="quick-action">
+        <div class="qa-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2h8"/><path d="M14 18l3 3 7-7"/></svg>
+        </div>
+        <div class="qa-label">Raffle</div>
+    </a>
+    <a href="{{ url_for('transactions') }}" class="quick-action">
+        <div class="qa-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        </div>
+        <div class="qa-label">Portfolio</div>
+    </a>
+</div>
+
+<!-- Active machines -->
+<div class="card" style="margin-bottom:24px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <h2 style="font-size:17px; font-weight:600;">Active Simulated Machines</h2>
+        <a href="{{ url_for('machines') }}" class="btn btn-ghost btn-sm">Browse catalogue →</a>
+    </div>
+    {% if active_machines %}
+        {% for um in active_machines %}
+        <div style="padding:16px 0; border-top:1px solid var(--border);">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:10px;">
+                <div>
+                    <div style="font-weight:600; font-size:15px;">{{ um.machine.name }}</div>
+                    <div style="font-size:12px; color:var(--text-muted);">
+                        Started {{ um.start_date.strftime('%d %b %Y') }} · {{ um.days_remaining }} days remaining
+                    </div>
+                </div>
+                <div style="text-align:right;">
+                    <div style="font-weight:600; color:var(--accent-3);">{{ format_ugx(um.current_simulated_value) }}</div>
+                    <div style="font-size:11px; color:var(--text-muted);">Target {{ format_ugx(um.simulated_target) }}</div>
+                </div>
+            </div>
+            <div class="progress">
+                <div class="progress-bar" style="width:{{ um.progress_percent }}%;" data-target="{{ um.progress_percent }}%;"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--text-muted); margin-top:6px;">
+                <span>{{ um.days_elapsed }} days elapsed</span>
+                <span>{{ '%.1f' % um.progress_percent }}% progress</span>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 20h10"/></svg>
+            <h3>No active machines</h3>
+            <p>Browse the catalogue to acquire your first simulated AI node.</p>
+            <a href="{{ url_for('machines') }}" class="btn btn-primary" style="margin-top:14px;">Explore Machines</a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Recent activity -->
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px;">
+        <h2 style="font-size:17px; font-weight:600;">Recent Activity</h2>
+        <a href="{{ url_for('transactions') }}" class="btn btn-ghost btn-sm">View all →</a>
+    </div>
+    {% if recent_tx %}
+        {% for tx in recent_tx %}
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-top:1px solid var(--border);">
+            <div>
+                <div style="font-weight:500; font-size:14px;">{{ tx.description }}</div>
+                <div style="font-size:12px; color:var(--text-muted);">{{ tx.created_at.strftime('%d %b %Y · %H:%M') }} · {{ tx.reference }}</div>
+            </div>
+            <div style="text-align:right; font-weight:600; color:{% if tx.type in ['deposit','bonus','return','referral','raffle'] %}var(--success){% else %}var(--danger){% endif %};">
+                {% if tx.type in ['deposit','bonus','return','referral','raffle'] %}+{% else %}-{% endif %}{{ format_ugx(tx.amount) }}
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <p>No activity yet. Start by adding simulated funds.</p>
+        </div>
+    {% endif %}
+</div>
+
+<div class="disclaimer" style="margin-top:24px;">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+    <span>All values displayed are <strong>simulated</strong> for demonstration purposes only. They do not represent real financial returns or guaranteed outcomes.</span>
+</div>
+{% endblock %}
