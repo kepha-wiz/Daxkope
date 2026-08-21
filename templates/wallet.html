@@ -1,1 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Wallet · Cash Flow Future AI{% endblock %}
+{% block content %}
+<div class="topbar">
+    <h1>Wallet</h1>
+</div>
 
+<div class="grid-3">
+    <div class="card balance-card">
+        <div class="card-title">Available Balance</div>
+        <div class="card-value">{{ format_ugx(user.wallet.balance) }}</div>
+        <div class="card-sub">Spendable simulation credits</div>
+    </div>
+    <div class="card balance-card accent-green">
+        <div class="card-title">Bonus Balance</div>
+        <div class="card-value">{{ format_ugx(user.wallet.bonus_balance) }}</div>
+        <div class="card-sub">Promotional simulation rewards</div>
+    </div>
+    <div class="card balance-card accent-purple">
+        <div class="card-title">Investment Balance</div>
+        <div class="card-value">{{ format_ugx(user.wallet.investment_balance) }}</div>
+        <div class="card-sub">Locked in active simulations</div>
+    </div>
+</div>
+
+<div class="quick-actions" style="margin-top:20px;">
+    <a href="{{ url_for('deposit') }}" class="quick-action">
+        <div class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg></div>
+        <div class="qa-label">Add Funds</div>
+    </a>
+    <a href="{{ url_for('withdraw') }}" class="quick-action">
+        <div class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 7l-10 10M8 7h9v9"/></svg></div>
+        <div class="qa-label">Withdraw</div>
+    </a>
+    <a href="{{ url_for('transactions') }}" class="quick-action">
+        <div class="qa-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></div>
+        <div class="qa-label">View Ledger</div>
+    </a>
+</div>
+
+<div class="disclaimer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+    <span>All balances are <strong>simulated</strong>. No real money is held, transferred, or invested.</span>
+</div>
+{% endblock %}
