@@ -1,1 +1,217 @@
+{% extends "base.html" %}
+{% block title %}Cash Flow Future AI — Smarter Digital Infrastructure{% endblock %}
 
+{% block body %}
+<div class="landing-wrap">
+    <!-- Top nav -->
+    <header style="display:flex; justify-content:space-between; align-items:center; padding:20px 0;">
+        <div style="display:flex; align-items:center; gap:10px;">
+            <div class="brand-mark">CF</div>
+            <div>
+                <div style="font-weight:700; font-size:15px;">Cash Flow Future</div>
+                <div style="font-size:11px; color:var(--text-muted); letter-spacing:1px;">AI PLATFORM</div>
+            </div>
+        </div>
+        <div style="display:flex; gap:10px;">
+            <a href="{{ url_for('login') }}" class="btn btn-ghost">Log In</a>
+            <a href="{{ url_for('register') }}" class="btn btn-primary">Get Started</a>
+        </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero">
+        <span class="hero-eyebrow">Simulation Platform · Not a Financial Service</span>
+        <h1>Build Your Digital Future<br>With Smarter AI Infrastructure</h1>
+        <p class="lead">Cash Flow Future AI is a simulated environment for exploring digital infrastructure and investment concepts. Learn, experiment, and track simulated performance — no real money is ever collected or invested.</p>
+        <div class="hero-cta">
+            <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">Get Started</a>
+            <a href="#machines-section" class="btn btn-secondary btn-lg">Explore Plans</a>
+            <a href="#features" class="btn btn-ghost btn-lg">Features</a>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section class="section" id="features">
+        <h2 class="section-title">Everything you need to explore</h2>
+        <p class="section-sub">A complete simulated fintech experience, built for learning.</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg>
+                </div>
+                <h3>AI Infrastructure</h3>
+                <p>Explore simulated compute nodes representing real-world AI hardware categories.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V8H4a2 2 0 010-4h14v4"/><path d="M20 12v4H4a2 2 0 000 4h16v-4"/></svg>
+                </div>
+                <h3>Digital Wallet</h3>
+                <p>Manage simulated balances with a transparent, auditable transaction ledger.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+                </div>
+                <h3>Performance Tracking</h3>
+                <p>Visualise simulated machine progress with real-time dashboards and charts.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/><path d="M3 21v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+                </div>
+                <h3>Referral Rewards</h3>
+                <p>Invite friends and earn simulated rewards when they join the platform.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2h8"/><path d="M14 18l3 3 7-7"/></svg>
+                </div>
+                <h3>Raffle Rewards</h3>
+                <p>Participate in weekly simulated raffles with transparent entry tracking.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                </div>
+                <h3>Portfolio Dashboard</h3>
+                <p>A unified view of your simulated assets, activity, and performance metrics.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Machines preview -->
+    <section class="section" id="machines-section">
+        <h2 class="section-title">Simulated Machine Tiers</h2>
+        <p class="section-sub">Explore the catalogue of simulated AI infrastructure nodes.</p>
+        <div class="grid-3">
+            {% for m in machines_config %}
+            <div class="machine-card">
+                <div class="machine-tier">{{ m.tier }}</div>
+                <div class="machine-name">{{ m.name }}</div>
+                <p style="color:var(--text-secondary); font-size:13px; margin-bottom:14px;">{{ m.description }}</p>
+                <div class="machine-stats">
+                    <div>
+                        <div class="machine-stat-label">Entry Price</div>
+                        <div class="machine-stat-value">{{ format_ugx(m.price) }}</div>
+                    </div>
+                    <div>
+                        <div class="machine-stat-label">Simulation Target</div>
+                        <div class="machine-stat-value">{{ format_ugx(m.simulation_target) }}</div>
+                    </div>
+                    <div>
+                        <div class="machine-stat-label">Duration</div>
+                        <div class="machine-stat-value">{{ m.duration_days }} days</div>
+                    </div>
+                    <div>
+                        <div class="machine-stat-label">Status</div>
+                        <div class="machine-stat-value"><span class="badge badge-info">Simulation</span></div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="disclaimer" style="margin-top:24px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            <span><strong>SIMULATION VALUES — NOT GUARANTEED FINANCIAL RETURNS.</strong> All figures shown are purely demonstrative and do not represent real investment outcomes.</span>
+        </div>
+    </section>
+
+    <!-- How it works -->
+    <section class="section">
+        <h2 class="section-title">How it works</h2>
+        <p class="section-sub">Five simple steps to explore the simulation.</p>
+        <div class="how-it-works">
+            <div class="step">
+                <div class="step-num">1</div>
+                <h4>Create Account</h4>
+                <p>Sign up in under a minute.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">2</div>
+                <h4>Add Simulated Funds</h4>
+                <p>Top up your demo wallet.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">3</div>
+                <h4>Choose a Machine</h4>
+                <p>Pick a simulated tier.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">4</div>
+                <h4>Track Performance</h4>
+                <p>Watch simulated progress.</p>
+            </div>
+            <div class="step">
+                <div class="step-num">5</div>
+                <h4>Request Withdrawal</h4>
+                <p>Simulate cashing out.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Scam awareness banner -->
+    <section class="section">
+        <div class="scam-banner">
+            <div class="scam-banner-icon">
+                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+            </div>
+            <div>
+                <h3>Invest Responsibly · Beware of Scammers</h3>
+                <p>Never share your credentials, OTPs, or send money to unverified parties. If you encounter suspicious activity or believe you've been targeted by a scammer, <a href="{{ url_for('scam_awareness') }}" style="color:var(--warning); text-decoration:underline;">report it here</a>. Your safety matters.</p>
+            </div>
+            <a href="{{ url_for('scam_awareness') }}" class="btn btn-secondary">Report Scam</a>
+        </div>
+    </section>
+
+    <!-- Trust -->
+    <section class="section">
+        <h2 class="section-title">Built on trust</h2>
+        <p class="section-sub">Transparent by design.</p>
+        <div class="trust-grid">
+            <div class="trust-item">
+                <div class="trust-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div>
+                    <div style="font-weight:600; font-size:14px;">Secure Accounts</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Hashed passwords & sessions</div>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+                </div>
+                <div>
+                    <div style="font-weight:600; font-size:14px;">Transparent Ledger</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Every action is recorded</div>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 5-5"/></svg>
+                </div>
+                <div>
+                    <div style="font-weight:600; font-size:14px;">Portfolio Tracking</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Real-time dashboards</div>
+                </div>
+            </div>
+            <div class="trust-item">
+                <div class="trust-icon">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+                </div>
+                <div>
+                    <div style="font-weight:600; font-size:14px;">Mobile Responsive</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Optimised for every device</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p><strong>Cash Flow Future AI</strong> · A simulation platform for educational and demonstrative purposes only.</p>
+        <p style="margin-top:8px; font-size:12px;">No real money is collected. No investment returns are guaranteed. © 2026</p>
+    </footer>
+</div>
+{% endblock %}
