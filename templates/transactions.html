@@ -1,1 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Transactions · Cash Flow Future AI{% endblock %}
+{% block content %}
+<div class="topbar">
+    <h1>Transaction Ledger</h1>
+</div>
 
+<div class="card">
+    {% if transactions %}
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Reference</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                    <th>Balance After</th>
+                    <th>Status</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for tx in transactions %}
+                <tr>
+                    <td style="font-family:monospace; font-size:12px;">{{ tx.reference }}</td>
+                    <td><span class="badge badge-info">{{ tx.type }}</span></td>
+                    <td>{{ tx.description }}</td>
+                    <td style="font-weight:600; color:{% if tx.type in ['deposit','bonus','return','referral','raffle'] %}var(--success){% else %}var(--danger){% endif %};">
+                        {% if tx.type in ['deposit','bonus','return','referral','raffle'] %}+{% else %}-{% endif %}{{ format_ugx(tx.amount) }}
+                    </td>
+                    <td>{{ format_ugx(tx.balance_after) }}</td>
+                    <td>
+                        {% if tx.status == 'completed' %}<span class="badge badge-success">Completed</span>
+                        {% elif tx.status == 'pending' %}<span class="badge badge-warning">Pending</span>
+                        {% else %}<span class="badge badge-danger">Failed</span>{% endif %}
+                    </td>
+                    <td style="font-size:12px; color:var(--text-muted);">{{ tx.created_at.strftime('%d %b %Y %H:%M') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="empty-state">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+        <h3>No transactions yet</h3>
+        <p>Your activity will appear here.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
