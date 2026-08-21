@@ -1,1 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Scam Awareness · Cash Flow Future AI{% endblock %}
+{% block content %}
+<div class="topbar">
+    <h1>Scam Awareness & Reporting</h1>
+</div>
 
+<div class="card" style="background:linear-gradient(135deg, rgba(255, 181, 71, 0.08), rgba(255, 92, 122, 0.05)); border-color:rgba(255, 181, 71, 0.25); margin-bottom:24px;">
+    <div style="display:flex; gap:16px; align-items:flex-start;">
+        <div style="width:48px; height:48px; border-radius:12px; background:rgba(255, 181, 71, 0.15); color:var(--warning); display:grid; place-items:center; flex-shrink:0;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        </div>
+        <div>
+            <h2 style="font-size:19px; margin-bottom:6px; color:var(--warning);">Invest Responsibly · Protect Yourself</h2>
+            <p style="color:var(--text-secondary); font-size:14px; line-height:1.6;">
+                Scammers often impersonate legitimate platforms to steal money, credentials, or personal information. 
+                Cash Flow Future AI is a <strong>simulation platform</strong> — we will never ask you to send real money to personal numbers, 
+                share OTPs, or click suspicious links. If someone contacts you claiming to represent us and asks for payment, 
+                <strong>it is a scam</strong>. Report it below so we can warn others.
+            </p>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">Red Flags to Watch For</h2>
+        <ul style="list-style:none; display:flex; flex-direction:column; gap:12px;">
+            <li style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="color:var(--danger); font-size:18px;">⚠</span>
+                <div>
+                    <div style="font-weight:500;">Guaranteed returns</div>
+                    <div style="font-size:12px; color:var(--text-muted);">No legitimate investment can promise fixed profits.</div>
+                </div>
+            </li>
+            <li style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="color:var(--danger); font-size:18px;">⚠</span>
+                <div>
+                    <div style="font-weight:500;">Requests for OTPs or passwords</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Never share these with anyone — ever.</div>
+                </div>
+            </li>
+            <li style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="color:var(--danger); font-size:18px;">⚠</span>
+                <div>
+                    <div style="font-weight:500;">Pressure to act immediately</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Scammers create false urgency to bypass your judgement.</div>
+                </div>
+            </li>
+            <li style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="color:var(--danger); font-size:18px;">⚠</span>
+                <div>
+                    <div style="font-weight:500;">Payments to personal numbers</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Legitimate businesses use verified merchant codes.</div>
+                </div>
+            </li>
+            <li style="display:flex; gap:10px; align-items:flex-start;">
+                <span style="color:var(--danger); font-size:18px;">⚠</span>
+                <div>
+                    <div style="font-weight:500;">Unsolicited "investment opportunities"</div>
+                    <div style="font-size:12px; color:var(--text-muted);">Be sceptical of cold calls, DMs, and WhatsApp messages.</div>
+                </div>
+            </li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">Report a Scammer</h2>
+        <p style="color:var(--text-secondary); font-size:13px; margin-bottom:16px;">Your report helps protect the community. All submissions are reviewed by our team.</p>
+        <form method="POST" action="{{ url_for('submit_scam_report') }}">
+            <div class="form-group">
+                <label class="form-label">Scammer's Name or Alias *</label>
+                <input type="text" name="scammer_name" class="form-input" required placeholder="e.g. John D., @crypto_guru">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Scammer's Contact (phone, email, social handle)</label>
+                <input type="text" name="scammer_contact" class="form-input" placeholder="+256 7XX..., email, @handle">
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Platform Used</label>
+                    <input type="text" name="platform" class="form-input" placeholder="WhatsApp, Facebook, Telegram...">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Method / Scheme</label>
+                    <input type="text" name="method" class="form-input" placeholder="Fake investment, phishing...">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Amount Involved (UGX, optional)</label>
+                <input type="number" name="amount_involved" class="form-input" placeholder="e.g. 200000">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description *</label>
+                <textarea name="description" class="form-textarea" required placeholder="Describe what happened in detail..."></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Evidence (describe screenshots, messages, etc.)</label>
+                <textarea name="evidence" class="form-textarea" placeholder="Optional — describe any evidence you have."></textarea>
+            </div>
+            <div class="grid-2">
+                <div class="form-group">
+                    <label class="form-label">Your Name (optional)</label>
+                    <input type="text" name="reporter_name" class="form-input" placeholder="Anonymous">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Your Contact (optional)</label>
+                    <input type="text" name="reporter_contact" class="form-input" placeholder="For follow-up only">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Submit Report</button>
+        </form>
+    </div>
+</div>
+
+{% if recent %}
+<div class="card" style="margin-top:24px;">
+    <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">Recently Resolved Reports</h2>
+    <p style="color:var(--text-secondary); font-size:13px; margin-bottom:16px;">These scammers have been reported and verified by our team.</p>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Scammer</th><th>Platform</th><th>Method</th><th>Description</th><th>Resolved</th></tr></thead>
+            <tbody>
+                {% for r in recent %}
+                <tr>
+                    <td style="font-weight:500; color:var(--danger);">{{ r.scammer_name }}</td>
+                    <td style="font-size:12px;">{{ r.platform or '—' }}</td>
+                    <td style="font-size:12px;">{{ r.method or '—' }}</td>
+                    <td style="font-size:12px; max-width:300px;">{{ r.description[:100] }}{% if r.description|length > 100 %}...{% endif %}</td>
+                    <td style="font-size:12px; color:var(--text-muted);">{{ r.created_at.strftime('%d %b %Y') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+<div class="card" style="margin-top:24px; background:rgba(0, 212, 255, 0.05); border-color:rgba(0, 212, 255, 0.2);">
+    <h2 style="font-size:17px; font-weight:600; margin-bottom:10px; color:var(--accent);">Official Channels Only</h2>
+    <p style="color:var(--text-secondary); font-size:14px; line-height:1.6;">
+        Cash Flow Future AI communicates only through this website. We will never call you to request payment, 
+        ask for your password, or request that you transfer funds to a personal mobile money number. 
+        If you are ever unsure, contact us through the official platform before taking any action.
+    </p>
+</div>
+{% endblock %}
