@@ -1,1 +1,31 @@
-
+{% extends "base.html" %}
+{% block title %}Log In · Cash Flow Future AI{% endblock %}
+{% block body %}
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="brand">
+            <div class="brand-mark" style="margin:0 auto 12px;">CF</div>
+            <div style="font-weight:700; font-size:16px;">Cash Flow Future AI</div>
+        </div>
+        <h2>Welcome back</h2>
+        <p class="sub">Log in to access your simulated dashboard.</p>
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-input" required placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-input" required placeholder="••••••••">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Log In</button>
+        </form>
+        <div class="auth-footer">
+            Don't have an account? <a href="{{ url_for('register') }}">Create one</a>
+        </div>
+        <div style="text-align:center; margin-top:16px;">
+            <a href="{{ url_for('landing') }}" style="font-size:13px; color:var(--text-muted);">← Back to home</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
