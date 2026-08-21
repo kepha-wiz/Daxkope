@@ -1,1 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Machines · Cash Flow Future AI{% endblock %}
+{% block content %}
+<div class="topbar">
+    <div>
+        <h1>AI Machine Catalogue</h1>
+        <p style="color:var(--text-secondary); font-size:13px; margin-top:4px;">Select a simulated compute tier to explore.</p>
+    </div>
+</div>
 
+<div class="disclaimer">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+    <span><strong>SIMULATION VALUES — NOT GUARANTEED FINANCIAL RETURNS.</strong> All figures are demonstrative.</span>
+</div>
+
+<div class="grid-3">
+    {% for m in machines %}
+    <div class="machine-card">
+        <div class="machine-tier">{{ m.tier }}</div>
+        <div class="machine-name">{{ m.name }}</div>
+        <p style="color:var(--text-secondary); font-size:13px; margin-bottom:14px;">{{ m.description }}</p>
+        <div class="machine-stats">
+            <div>
+                <div class="machine-stat-label">Entry Price</div>
+                <div class="machine-stat-value">{{ format_ugx(m.price) }}</div>
+            </div>
+            <div>
+                <div class="machine-stat-label">Simulation Target</div>
+                <div class="machine-stat-value">{{ format_ugx(m.simulation_target) }}</div>
+            </div>
+            <div>
+                <div class="machine-stat-label">Duration</div>
+                <div class="machine-stat-value">{{ m.duration_days }} days</div>
+            </div>
+            <div>
+                <div class="machine-stat-label">Status</div>
+                <div class="machine-stat-value"><span class="badge badge-info">Simulation</span></div>
+            </div>
+        </div>
+        <a href="{{ url_for('machine_detail', machine_id=m.id) }}" class="btn btn-primary btn-block">View Details</a>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}
