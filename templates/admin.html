@@ -1,1 +1,268 @@
+{% extends "base.html" %}
+{% block title %}Admin · Cash Flow Future AI{% endblock %}
+{% block content %}
+<div class="topbar">
+    <h1>Admin Panel</h1>
+    <span class="badge badge-info">Administrator</span>
+</div>
 
+<div class="tabs">
+    <button class="tab {% if tab == 'overview' %}active{% endif %}" data-tab-group="admin" data-tab-target="overview" onclick="showTab('overview')">Overview</button>
+    <button class="tab {% if tab == 'deposits' %}active{% endif %}" data-tab-group="admin" data-tab-target="deposits" onclick="showTab('deposits')">Deposits</button>
+    <button class="tab {% if tab == 'withdrawals' %}active{% endif %}" data-tab-group="admin" data-tab-target="withdrawals" onclick="showTab('withdrawals')">Withdrawals</button>
+    <button class="tab {% if tab == 'raffle' %}active{% endif %}" data-tab-group="admin" data-tab-target="raffle" onclick="showTab('raffle')">Raffle</button>
+    <button class="tab {% if tab == 'reports' %}active{% endif %}" data-tab-group="admin" data-tab-target="reports" onclick="showTab('reports')">Scam Reports</button>
+</div>
+
+<!-- Overview -->
+<div id="tab-overview" class="tab-panel" style="{% if tab != 'overview' %}display:none{% endif %}">
+    <div class="grid-4" style="margin-bottom:24px;">
+        <div class="card balance-card">
+            <div class="card-title">Total Users</div>
+            <div class="card-value">{{ users|length }}</div>
+        </div>
+        <div class="card balance-card accent-gold">
+            <div class="card-title">Pending Deposits</div>
+            <div class="card-value">{{ pending_deposits|length }}</div>
+        </div>
+        <div class="card balance-card accent-purple">
+            <div class="card-title">Pending Withdrawals</div>
+            <div class="card-value">{{ pending_withdrawals|length }}</div>
+        </div>
+        <div class="card balance-card" style="border-left:3px solid var(--warning);">
+            <div class="card-title">New Scam Reports</div>
+            <div class="card-value">{{ reports|length }}</div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">Users</h2>
+        {% if users %}
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Name</th><th>Email</th><th>Phone</th><th>Balance</th><th>Joined</th></tr></thead>
+                <tbody>
+                    {% for u in users %}
+                    <tr>
+                        <td style="font-weight:500;">{{ u.full_name }}</td>
+                        <td>{{ u.email }}</td>
+                        <td>{{ u.phone }}</td>
+                        <td>{{ format_ugx(u.wallet.balance if u.wallet else 0) }}</td>
+                        <td style="font-size:12px; color:var(--text-muted);">{{ u.created_at.strftime('%d %b %Y') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p style="color:var(--text-muted);">No users yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Deposits -->
+<div id="tab-deposits" class="tab-panel" style="{% if tab != 'deposits' %}display:none{% endif %}">
+    <div class="card">
+        <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">All Deposits</h2>
+        {% if deposits %}
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>User</th><th>Amount</th><th>Method</th><th>Reference</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for d in deposits %}
+                    <tr>
+                        <td>{{ d.user.full_name }}</td>
+                        <td style="font-weight:600;">{{ format_ugx(d.amount) }}</td>
+                        <td>{{ d.method }}</td>
+                        <td style="font-family:monospace; font-size:12px;">{{ d.reference_id }}</td>
+                        <td style="font-size:12px;">{{ d.created_at.strftime('%d %b %H:%M') }}</td>
+                        <td>
+                            {% if d.status == 'pending' %}<span class="badge badge-warning">Pending</span>
+                            {% elif d.status == 'approved' %}<span class="badge badge-success">Approved</span>
+                            {% else %}<span class="badge badge-danger">Rejected</span>{% endif %}
+                        </td>
+                        <td>
+                            {% if d.status == 'pending' %}
+                            <form method="POST" action="{{ url_for('process_deposit', dep_id=d.id, action='approve') }}" style="display:inline;">
+                                <button class="btn btn-success btn-sm">Approve</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('process_deposit', dep_id=d.id, action='reject') }}" style="display:inline;">
+                                <button class="btn btn-danger btn-sm">Reject</button>
+                            </form>
+                            {% else %}—{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state"><p>No deposits yet.</p></div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Withdrawals -->
+<div id="tab-withdrawals" class="tab-panel" style="{% if tab != 'withdrawals' %}display:none{% endif %}">
+    <div class="card">
+        <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">All Withdrawals</h2>
+        {% if withdrawals %}
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>User</th><th>Amount</th><th>Net</th><th>Method</th><th>Mobile</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for w in withdrawals %}
+                    <tr>
+                        <td>{{ w.user.full_name }}</td>
+                        <td style="font-weight:600;">{{ format_ugx(w.amount) }}</td>
+                        <td style="color:var(--accent-3);">{{ format_ugx(w.net_amount) }}</td>
+                        <td>{{ w.method }}</td>
+                        <td>{{ w.mobile_number }}</td>
+                        <td style="font-size:12px;">{{ w.created_at.strftime('%d %b %H:%M') }}</td>
+                        <td>
+                            {% if w.status == 'pending' %}<span class="badge badge-warning">Pending</span>
+                            {% elif w.status == 'approved' %}<span class="badge badge-success">Approved</span>
+                            {% else %}<span class="badge badge-danger">Rejected</span>{% endif %}
+                        </td>
+                        <td>
+                            {% if w.status == 'pending' %}
+                            <form method="POST" action="{{ url_for('process_withdrawal', w_id=w.id, action='approve') }}" style="display:inline;">
+                                <button class="btn btn-success btn-sm">Approve</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('process_withdrawal', w_id=w.id, action='reject') }}" style="display:inline;">
+                                <button class="btn btn-danger btn-sm">Reject</button>
+                            </form>
+                            {% else %}—{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state"><p>No withdrawals yet.</p></div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Raffle -->
+<div id="tab-raffle" class="tab-panel" style="{% if tab != 'raffle' %}display:none{% endif %}">
+    <div class="card" style="margin-bottom:20px;">
+        <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">Create New Raffle</h2>
+        <form method="POST">
+            <div class="grid-3">
+                <div class="form-group">
+                    <label class="form-label">Name</label>
+                    <input type="text" name="name" class="form-input" value="Weekly AI Raffle" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Prize (UGX)</label>
+                    <input type="number" name="prize" class="form-input" value="100000" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Duration (days)</label>
+                    <input type="number" name="days" class="form-input" value="7" required>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary">Create Raffle</button>
+        </form>
+    </div>
+
+    {% if active_raffles %}
+    <div class="card" style="margin-bottom:20px;">
+        <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">Active Raffles</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Name</th><th>Prize</th><th>Entries</th><th>Closes</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for r in active_raffles %}
+                    <tr>
+                        <td style="font-weight:500;">{{ r.name }}</td>
+                        <td style="color:var(--accent-3); font-weight:600;">{{ format_ugx(r.prize_amount) }}</td>
+                        <td>{{ r.entries|sum(attribute='entries') }}</td>
+                        <td style="font-size:12px;">{{ r.closes_at.strftime('%d %b %Y %H:%M') }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('draw_raffle', r_id=r.id) }}">
+                                <button class="btn btn-primary btn-sm" data-confirm="Draw a winner now?">Draw Winner</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if past_raffles %}
+    <div class="card">
+        <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">Past Raffles</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Name</th><th>Winner</th><th>Prize</th><th>Closed</th></tr></thead>
+                <tbody>
+                    {% for r in past_raffles %}
+                    <tr>
+                        <td>{{ r.name }}</td>
+                        <td style="font-weight:500;">{{ r.winner.full_name if r.winner else '—' }}</td>
+                        <td style="color:var(--accent-3);">{{ format_ugx(r.prize_amount) }}</td>
+                        <td style="font-size:12px;">{{ r.closes_at.strftime('%d %b %Y') }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<!-- Scam reports -->
+<div id="tab-reports" class="tab-panel" style="{% if tab != 'reports' %}display:none{% endif %}">
+    <div class="card">
+        <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">Scam Reports</h2>
+        {% if reports %}
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Reporter</th><th>Scammer</th><th>Platform</th><th>Amount</th><th>Description</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>
+                    {% for r in reports %}
+                    <tr>
+                        <td>{{ r.reporter_name or 'Anonymous' }}<br><span style="font-size:11px; color:var(--text-muted);">{{ r.reporter_contact or '' }}</span></td>
+                        <td style="font-weight:500; color:var(--danger);">{{ r.scammer_name }}<br><span style="font-size:11px; color:var(--text-muted); font-weight:400;">{{ r.scammer_contact or '' }}</span></td>
+                        <td style="font-size:12px;">{{ r.platform or '—' }}<br>{{ r.method or '' }}</td>
+                        <td>{% if r.amount_involved %}{{ format_ugx(r.amount_involved) }}{% else %}—{% endif %}</td>
+                        <td style="max-width:240px; font-size:12px;">{{ r.description[:120] }}{% if r.description|length > 120 %}...{% endif %}</td>
+                        <td style="font-size:12px;">{{ r.created_at.strftime('%d %b %Y') }}</td>
+                        <td>
+                            {% if r.status == 'new' %}<span class="badge badge-warning">New</span>
+                            {% elif r.status == 'reviewed' %}<span class="badge badge-info">Reviewed</span>
+                            {% else %}<span class="badge badge-success">Resolved</span>{% endif %}
+                        </td>
+                        <td>
+                            {% if r.status != 'resolved' %}
+                            <form method="POST" action="{{ url_for('update_report', r_id=r.id, status='reviewed') }}" style="display:inline;">
+                                <button class="btn btn-secondary btn-sm">Mark Reviewed</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('update_report', r_id=r.id, status='resolved') }}" style="display:inline;">
+                                <button class="btn btn-success btn-sm">Resolve</button>
+                            </form>
+                            {% else %}—{% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state"><p>No scam reports yet.</p></div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+function showTab(name) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+    document.getElementById('tab-' + name).style.display = '';
+}
+</script>
+{% endblock %}
