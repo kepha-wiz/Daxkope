@@ -1,1 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Withdraw · Cash Flow Future AI{% endblock %}
+{% block content %}
+<div style="margin-bottom:20px;">
+    <a href="{{ url_for('wallet') }}" style="color:var(--text-muted); font-size:13px;">← Back to wallet</a>
+</div>
 
+<div class="card" style="max-width:560px;">
+    <h1 style="font-size:22px; font-weight:700; margin-bottom:6px;">Request Simulated Withdrawal</h1>
+    <p style="color:var(--text-secondary); font-size:14px; margin-bottom:20px;">Submit a withdrawal request for admin review.</p>
+
+    <div style="background:var(--bg-secondary); padding:14px; border-radius:var(--radius-sm); margin-bottom:20px; display:flex; justify-content:space-between;">
+        <span style="color:var(--text-muted); font-size:13px;">Available balance</span>
+        <span style="font-weight:600;">{{ format_ugx(user.wallet.balance) }}</span>
+    </div>
+
+    <div class="disclaimer" style="margin-bottom:20px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        <span>No real mobile-money transfer is executed. This is a simulation.</span>
+    </div>
+
+    <form method="POST">
+        <div class="form-group">
+            <label class="form-label">Method</label>
+            <select name="method" class="form-select" required>
+                <option value="">Select method</option>
+                {% for m in methods %}
+                <option value="{{ m.id }}">{{ m.name }} — simulated</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label class="form-label">Mobile Number</label>
+            <input type="tel" name="mobile_number" class="form-input" required placeholder="+256 7XX XXX XXX">
+        </div>
+        <div class="form-group">
+            <label class="form-label">Amount (UGX)</label>
+            <input type="number" name="amount" id="wAmount" class="form-input" required min="10000" step="100" placeholder="e.g. 20000" oninput="updateSummary()">
+            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">Minimum {{ format_ugx(10000) }} · Fee: 2%</div>
+        </div>
+        <div style="background:var(--bg-secondary); padding:14px; border-radius:var(--radius-sm); margin:16px 0;">
+            <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                <span style="color:var(--text-muted); font-size:13px;">Withdrawal fee</span>
+                <span id="wFee" style="font-size:13px;">UGX 0</span>
+            </div>
+            <div style="display:flex; justify-content:space-between; padding-top:8px; border-top:1px solid var(--border);">
+                <span style="font-weight:500;">You receive</span>
+                <span id="wNet" style="font-weight:600; color:var(--accent-3);">UGX 0</span>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Submit Withdrawal Request</button>
+    </form>
+</div>
+
+<script>
+function updateSummary() {
+    const amt = parseFloat(document.getElementById('wAmount').value) || 0;
+    const fee = amt * 0.02;
+    const net = amt - fee;
+    document.getElementById('wFee').textContent = 'UGX ' + Math.round(fee).toLocaleString();
+    document.getElementById('wNet').textContent = 'UGX ' + Math.round(net).toLocaleString();
+}
+</script>
+{% endblock %}
