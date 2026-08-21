@@ -1,1 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Raffle · Cash Flow Future AI{% endblock %}
+{% block content %}
+<div class="topbar">
+    <h1>Weekly AI Raffle</h1>
+</div>
 
+{% if active %}
+<div class="raffle-hero">
+    <div style="font-size:12px; color:var(--accent-3); letter-spacing:2px; text-transform:uppercase; margin-bottom:6px;">🎁 Live Now</div>
+    <h2>{{ active.name }}</h2>
+    <p style="color:var(--text-secondary); margin-top:6px;">Simulated prize pool — no real money is awarded.</p>
+    <div class="raffle-stats">
+        <div class="raffle-stat">
+            <div class="raffle-stat-label">Prize Pool</div>
+            <div class="raffle-stat-value">{{ format_ugx(active.prize_amount) }}</div>
+        </div>
+        <div class="raffle-stat">
+            <div class="raffle-stat-label">Your Entries</div>
+            <div class="raffle-stat-value">{{ my_entries }}</div>
+        </div>
+        <div class="raffle-stat">
+            <div class="raffle-stat-label">Closes</div>
+            <div class="raffle-stat-value" style="font-size:16px;">{{ active.closes_at.strftime('%d %b · %H:%M') }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="card" style="margin-top:20px;">
+    <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">Earn Entries</h2>
+    <div class="grid-2">
+        <form method="POST" action="{{ url_for('enter_raffle') }}" style="display:flex; justify-content:space-between; align-items:center; padding:14px; background:var(--bg-secondary); border-radius:var(--radius-sm);">
+            <div>
+                <div style="font-weight:500;">Daily Login</div>
+                <div style="font-size:12px; color:var(--text-muted);">+1 entry · once per day</div>
+            </div>
+            <input type="hidden" name="reason" value="daily_login">
+            <button class="btn btn-primary btn-sm" type="submit">Claim</button>
+        </form>
+        <form method="POST" action="{{ url_for('enter_raffle') }}" style="display:flex; justify-content:space-between; align-items:center; padding:14px; background:var(--bg-secondary); border-radius:var(--radius-sm);">
+            <div>
+                <div style="font-weight:500;">Purchase a Machine</div>
+                <div style="font-size:12px; color:var(--text-muted);">+3 entries per purchase</div>
+            </div>
+            <input type="hidden" name="reason" value="buy_machine">
+            <button class="btn btn-primary btn-sm" type="submit">Claim</button>
+        </form>
+        <form method="POST" action="{{ url_for('enter_raffle') }}" style="display:flex; justify-content:space-between; align-items:center; padding:14px; background:var(--bg-secondary); border-radius:var(--radius-sm);">
+            <div>
+                <div style="font-weight:500;">Invite a Friend</div>
+                <div style="font-size:12px; color:var(--text-muted);">+2 entries per referral</div>
+            </div>
+            <input type="hidden" name="reason" value="invite_friend">
+            <button class="btn btn-primary btn-sm" type="submit">Claim</button>
+        </form>
+        <form method="POST" action="{{ url_for('enter_raffle') }}" style="display:flex; justify-content:space-between; align-items:center; padding:14px; background:var(--bg-secondary); border-radius:var(--radius-sm);">
+            <div>
+                <div style="font-weight:500;">Complete Profile</div>
+                <div style="font-size:12px; color:var(--text-muted);">+1 entry · once</div>
+            </div>
+            <input type="hidden" name="reason" value="complete_profile">
+            <button class="btn btn-primary btn-sm" type="submit">Claim</button>
+        </form>
+    </div>
+    <div class="disclaimer" style="margin-top:16px;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4M12 17h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>
+        <span>Prizes are simulated demo credits. No real money is distributed.</span>
+    </div>
+</div>
+{% else %}
+<div class="card">
+    <div class="empty-state">
+        <h3>No active raffle</h3>
+        <p>Check back soon for the next draw.</p>
+    </div>
+</div>
+{% endif %}
+
+{% if past %}
+<div class="card" style="margin-top:20px;">
+    <h2 style="font-size:17px; font-weight:600; margin-bottom:14px;">Previous Winners</h2>
+    <div class="table-wrap">
+        <table>
+            <thead><tr><th>Raffle</th><th>Winner</th><th>Prize</th><th>Closed</th></tr></thead>
+            <tbody>
+                {% for r in past %}
+                <tr>
+                    <td>{{ r.name }}</td>
+                    <td style="font-weight:500;">{{ r.winner.full_name if r.winner else '—' }}</td>
+                    <td style="color:var(--accent-3); font-weight:600;">{{ format_ugx(r.prize_amount) }}</td>
+                    <td style="font-size:12px; color:var(--text-muted);">{{ r.closes_at.strftime('%d %b %Y') }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
