@@ -1,1 +1,40 @@
-
+{% extends "base.html" %}
+{% block title %}Register · Cash Flow Future AI{% endblock %}
+{% block body %}
+<div class="auth-wrap">
+    <div class="auth-card">
+        <div class="brand">
+            <div class="brand-mark" style="margin:0 auto 12px;">CF</div>
+            <div style="font-weight:700; font-size:16px;">Cash Flow Future AI</div>
+        </div>
+        <h2>Create your account</h2>
+        <p class="sub">Start exploring simulated AI infrastructure in minutes.</p>
+        <form method="POST">
+            <div class="form-group">
+                <label class="form-label">Full Name</label>
+                <input type="text" name="full_name" class="form-input" required placeholder="Jane Nakato">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" class="form-input" required placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Phone Number</label>
+                <input type="tel" name="phone" class="form-input" required placeholder="+256 7XX XXX XXX">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-input" required minlength="6" placeholder="At least 6 characters">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Referral Code <span style="color:var(--text-muted);">(optional)</span></label>
+                <input type="text" name="referral_code" class="form-input" placeholder="CFFA-XXXXX" style="text-transform:uppercase;">
+            </div>
+            <button type="submit" class="btn btn-primary btn-block btn-lg">Create Account</button>
+        </form>
+        <div class="auth-footer">
+            Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
